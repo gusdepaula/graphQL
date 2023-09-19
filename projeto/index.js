@@ -25,7 +25,7 @@ const typeDefs = gql`
   scalar Date
 
   type Usuario {
-    id: ID
+    id: Int
     nome: String!
     email: String!
     idade: Int
@@ -48,6 +48,7 @@ const typeDefs = gql`
     produtoEmDestaque: Produto
     numerosMegaSena: [Int!]!
     usuarios: [Usuario]
+    usuario(id: Int): Usuario
   }
 `;
 
@@ -100,6 +101,10 @@ const resolvers = {
     },
     usuarios() {
       return usuarios;
+    },
+    usuario(_, args) {
+      const selecionados = usuarios.filter((u) => u.id === args.id);
+      return selecionados ? selecionados[0] : null;
     },
   },
 };
