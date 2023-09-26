@@ -1,10 +1,12 @@
 const { perfis, proximoId } = require("../../data/db");
 
-function indiceUsuario(filtro) {
+function indicePerfil(filtro) {
   if (!filtro) return -1;
-  const { id, email } = filtro;
+  const { id, nome } = filtro;
   if (id) {
-    return perfis.findIndex((u) => u.id === id);
+    return perfis.findIndex((p) => p.id === id);
+  } else if (nome) {
+    return perfis.findIndex((p) => p.nome === nome);
   }
 
   return -1;
