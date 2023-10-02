@@ -1,10 +1,18 @@
-const db = require('../../config/db')
+const db = require("../../config/db");
 
 module.exports = {
-    async usuarios() {
-        // implementar
-    },
-    async usuario(_, { filtro }) {
-        // implementar
-    },
-}
+  usuarios() {
+    return db("usuarios");
+  },
+  usuario(_, { filtro }) {
+    if (!filtro) return null;
+    const { id, nome } = filtro;
+    if (id) {
+      return db("usuarios").where({ id }).first();
+    } else if (email) {
+      return db("usuarios").where({ email }).first();
+    } else {
+      return null;
+    }
+  },
+};
