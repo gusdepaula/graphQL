@@ -1,33 +1,41 @@
 const db = require("../../config/db");
 const { perfil: obterPerfil } = require("../Query/perfil");
+const { usuario: obterUsuario } = require("../Query/usuario");
 
 module.exports = {
   async novoUsuario(_, { dados }) {
     try {
       const idsPerfis = [];
       if (dados.perfis) {
-        for (filtro of dados.perfis) {
+        for (let filtro of dados.perfis) {
           const perfil = await obterPerfil(_, {
             filtro,
           });
           if (perfil) idsPerfis.push(perfil.id);
         }
       }
-      delete dados.perfis;
 
+      delete dados.perfis;
       const [id] = await db("usuarios").insert(dados);
 
-      for (perfil_id of idsPerfis) {
+      for (let perfil_id of idsPerfis) {
         await db("usuarios_perfis").insert({ perfil_id, usuario_id: id });
-
-        return db("usuarios").where({ id }).first();
       }
+
+      return db("usuarios").where({ id }).first();
     } catch (e) {
       throw new Error(e.sqlMessage);
     }
   },
-  async excluirUsuario(_, { filtro }) {
+  async excluirUsuario(_, args) {
     try {
+      const usuario = await obterUsuario(_, args);
+      if (usuario) {
+        const { id } = usuario;
+        await db("usuarios_perfis").where({ usuario_id: id }).delete();
+        await db("usuarios").where({ id }).delete();
+      }
+      return usuario;
     } catch (e) {
       throw new Error(e.sqlMessage);
     }
