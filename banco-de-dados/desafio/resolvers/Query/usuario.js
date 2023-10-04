@@ -6,7 +6,7 @@ module.exports = {
   },
   usuario(_, { filtro }) {
     if (!filtro) return null;
-    const { id, nome } = filtro;
+    const { id, email } = filtro;
     if (id) {
       return db("usuarios").where({ id }).first();
     } else if (email) {
