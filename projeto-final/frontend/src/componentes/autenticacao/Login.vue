@@ -57,17 +57,35 @@ export default {
   methods: {
     ...mapActions(["setUsuario"]),
     login() {
-      this.setUsuario({
-        id: 1,
-        nome: "Usuário Teste",
-        email: "usuario@cod3r.com.br",
-        perfis: [
-          {
-            nome: "admin",
+      this.$api
+        .query({
+          query: gql`
+            query($email: String!, $senha: String!) {
+              login(dados: { email: $email, senha: $senha }) {
+                id
+                nome
+                email
+                token
+                perfis {
+                  nome
+                }
+              }
+            }
+          `,
+          variables: {
+            email: this.usuario.email,
+            senha: this.usuario.senha,
           },
-        ],
-        token: "abc123",
-      });
+        })
+        .then((resultado) => {
+          this.dados = resultado.data.login;
+          this.usuario = {};
+          this.erros = null;
+          this.setUsuario(this.dados);
+        })
+        .catch((e) => {
+          this.erros = e;
+        });
     },
   },
 };
